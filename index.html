@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>قائمة أعطال البيت</title>
+
+<style>
+    body {
+        margin: 0;
+        font-family: Arial;
+        background-color: #8B5E3C;
+        direction: rtl;
+        color: white;
+    }
+
+    .container {
+        padding: 20px;
+    }
+
+    h2 {
+        text-align: center;
+    }
+
+    .input-box {
+        display: flex;
+        margin-bottom: 20px;
+    }
+
+    input {
+        flex: 1;
+        padding: 12px;
+        border-radius: 10px;
+        border: none;
+        font-size: 16px;
+    }
+
+    button {
+        margin-right: 10px;
+        padding: 12px;
+        border: none;
+        border-radius: 10px;
+        background-color: #d2a679;
+        cursor: pointer;
+    }
+
+    ul {
+        list-style: none;
+        padding: 0;
+    }
+
+    li {
+        background: #f5e1c8;
+        color: black;
+        padding: 12px;
+        border-radius: 10px;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    li.done {
+        text-decoration: line-through;
+        opacity: 0.6;
+    }
+
+    .check {
+        cursor: pointer;
+        font-size: 20px;
+    }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <h2>🔧 قائمة أعطال البيت</h2>
+
+    <div class="input-box">
+        <input type="text" id="taskInput" placeholder="اكتب الحاجة اللي عايز تصلحها...">
+        <button onclick="addTask()">إضافة</button>
+    </div>
+
+    <ul id="taskList"></ul>
+</div>
+
+<script>
+
+// تحميل البيانات عند فتح الصفحة
+window.onload = function() {
+    loadTasks();
+};
+
+function addTask() {
+    let input = document.getElementById("taskInput");
+    let text = input.value.trim();
+
+    if (text === "") return;
+
+    let task = {
+        text: text,
+        done: false
+    };
+
+    let tasks = getTasks();
+    tasks.push(task);
+    saveTasks(tasks);
+
+    renderTasks();
+    input.value = "";
+}
+
+function toggleDone(index) {
+    let tasks = getTasks();
+    tasks[index].done = !tasks[index].done;
+    saveTasks(tasks);
+    renderTasks();
+}
+
+// عرض القائمة
+function renderTasks() {
+    let list = document.getElementById("taskList");
+    list.innerHTML = "";
+
+    let tasks = getTasks();
+
+    tasks.forEach((task, index) => {
+        let li = document.createElement("li");
+
+        if (task.done) li.classList.add("done");
+
+        li.innerHTML = `
+            <span>${task.text}</span>
+            <span class="check" onclick="toggleDone(${index})">✔</span>
+        `;
+
+        list.appendChild(li);
+    });
+}
+
+// حفظ البيانات
+function saveTasks(tasks) {
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+}
+
+// جلب البيانات
+function getTasks() {
+    return JSON.parse(localStorage.getItem("tasks")) || [];
+}
+
+// تحميلها
+function loadTasks() {
+    renderTasks();
+}
+
+</script>
+
+</body>
+</html>
